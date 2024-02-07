@@ -1,0 +1,24 @@
+{
+  "name": "vypsen/comment-lib",
+  "description": "test lib for comment service",
+  "license": "proprietary",
+  "authors": [
+    {
+      "name": "vypsen",
+      "email": "s.sements2001@mail.ru"
+    }
+  ],
+  "require-dev": {
+    "phpunit/phpunit": "^9"
+  },
+  "require": {
+    "php": "^8.0",
+    "phpunit/phpunit": "^9",
+    "guzzlehttp/guzzle": "^7.8",
+  },
+  "autoload": {
+    "psr-4": {
+      "Vypsen\\CommentsLib\\": "src/"
+    }
+  }
+}
