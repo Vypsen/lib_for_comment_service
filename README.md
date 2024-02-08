@@ -1,9 +1,12 @@
-# Бибилотека для абстрактоного сервиса http://example
+# Бибилотека для абстрактного сервиса http://example
 # У этого сервиса есть 3 метода:
 ## GET http://example.com/comments - возвращает список комментариев 
 ## POST http://example.com/comment - добавить комментарий
 ## PUT http://example.com/comment/{id} - по идентификатору комментария обновляет поля, которые были в в запросе
 
+```
+composer require vypsen/comment-lib dev-master
+```
 
 ```php
 
@@ -27,5 +30,8 @@ $text = 'comment';
 
 $client->setComments($id, $name, $text);
 
+````
 
-\```
+``` 
+./vendor/bin/phpunit ./vendor/vypsen/comment-lib/tests
+```
