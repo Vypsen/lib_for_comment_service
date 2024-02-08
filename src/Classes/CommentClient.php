@@ -3,80 +3,67 @@
 namespace Vypsen\CommentsLib\Classes;
 
 use GuzzleHttp\Client;
-use GuzzleHttp\Exception\RequestException;
+use GuzzleHttp\HandlerStack;
+use Vypsen\CommentsLib\Traits\HttpRequestTrait;
 
 class CommentClient
 {
+    use HttpRequestTrait;
+
     private string $baseUrl;
     private Client $client;
 
     public function __construct()
     {
-        $this->baseUrl = 'localhost';
-        $this->client = new Client();
+        $this->baseUrl = 'http://example';
+        $this->client = $this->createDefaultClient();
     }
 
-    public function getComments() : array
+    public function setHandlerStack(HandlerStack $handlerStack)
     {
-        $url = $this->baseUrl . '/comments';
+        $this->client = new Client(['handler' => $handlerStack]);
+    }
 
-        try {
-            $response = $this->client->get($url);
-            return $this->validationResponse($response);
+    private function createDefaultClient(): Client
+    {
+        return new Client();
+    }
 
-        } catch (RequestException $e) {
-            throw new \Exception('Ошибка при получении комментариев: ' . $e->getMessage());
-        }
+    public function getComments()
+    {
+        $url = $this->getUrl() . '/comments';
+
+        return $this->performGetRequest($this->client, $url);
     }
 
     public function setComment(string $name, string $text)
     {
-        $url = $this->baseUrl . '/comment';
+        $url = $this->getUrl() . '/comment';
         $data = [
-            'body' => [
+            'form_params' => [
                 'name' => $name,
                 'text' => $text,
             ]
         ];
 
-        try {
-            $response = $this->client->post($url, $data)->getBody();
-            return $this->validationResponse($response);
-
-        } catch (RequestException $e) {
-            throw new \Exception('Ошибка при добавлении комментария: ' . $e->getMessage());
-        }
+        return $this->performPostRequest($this->client, $url, $data);
     }
 
     public function updateComment(int $id, string $name, string $text)
     {
-        $url = $this->baseUrl . '/comment/' . $id;
+        $url = $this->getUrl() . '/comment/' . $id;
         $data = [
-            'body' => [
+            'form_params' => [
                 'name' => $name,
                 'text' => $text,
             ]
         ];
 
-        try {
-            $response = $this->client->put($url, $data);
-            return $this->validationResponse($response);
-
-        } catch (RequestException $e) {
-            throw new \Exception('Ошибка при обновлении комментария: ' . $e->getMessage());
-        }
+        return $this->performPutRequest($this->client, $url, $data);
     }
 
-    private function validationResponse($response): array
+    public function getUrl(): string
     {
-        $body = json_decode($response->getBody(), true);
-
-        if (isset($body['success']) && $body['success']) {
-            return $body;
-        } elseif (isset($body['errorCode']) && isset($body['errorMessage'])) {
-            throw new \Exception('Ошибка (' . $body['errorCode'] . '): ' . $body['errorMessage']);
-        } else {
-            throw new \Exception('Неизвестная ошибка');
-        }
+        return $this->baseUrl;
     }
 }
