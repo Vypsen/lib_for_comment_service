@@ -15,7 +15,12 @@ composer require vypsen/comment-lib dev-master
 $client = new \Vypsen\CommentsLib\Classes\CommentClient();
 
 //получение всех комментариев
-var_dimp($client->getComments());
+$response = $client->getComments();
+
+//методы из GuzzleHttp
+$dataBody = json_decode($comments->getBody()->getContents(), true);
+$statusCode = $comments->getStatusCode();
+
 
 // добавить комментарий
 $name = 'User';
